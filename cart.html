@@ -14,8 +14,6 @@
     .remove-btn { background: #e74c3c; color: white; }
     .place-order { background: #27ae60; color: white; padding: 15px 35px; font-size: 16px; margin: 10px; }
     .back-btn { background: #3498db; color: white; padding: 15px 35px; font-size: 16px; margin: 10px; }
-    .phone-input { margin: 20px 0; text-align: center; }
-    .phone-input input { padding: 12px; width: 220px; font-size: 16px; border: 2px solid #ddd; border-radius: 6px; }
   </style>
 </head>
 <body>
@@ -28,13 +26,11 @@
   
   <h3 id="grandTotal" style="text-align: right; margin: 20px 0; font-size: 24px;"></h3>
   
-  <div class="phone-input">
-    <label>Restaurant WhatsApp: </label><br>
-    <input type="tel" id="restaurantPhone" value="+919342179559">
-  </div>
+  <!-- HIDDEN FROM CUSTOMER -->
+  <input type="hidden" id="restaurantPhone" value="+919342179559">
   
   <div style="text-align: center;">
-    <button class="place-order" onclick="placeOrder()">🚀 Send WhatsApp Order</button>
+    <button class="place-order" onclick="placeOrder()">🚀 Send Order to Kitchen</button>
     <br><button class="back-btn" onclick="goBack()">Back to Menu</button>
   </div>
 
@@ -54,8 +50,6 @@
         let menuItem = menu[item.id]; 
         let itemTotal = menuItem.price * item.qty;
         total += itemTotal;
-        
-        // SIMPLE order line format
         orderLines.push(`${menuItem.name} x${item.qty} = ₹${itemTotal}`);
         
         tbody.innerHTML += `<tr>
@@ -88,10 +82,7 @@
     function placeOrder() { 
       if (cart.length === 0) return alert("Cart is empty!");
       
-      const phone = document.getElementById("restaurantPhone").value.trim();
-      if (!phone || !phone.includes('+91')) return alert("Please enter valid WhatsApp number with +91");
-      
-      // PERFECT WhatsApp message format - SIMPLE & CLEAR
+      const phone = document.getElementById("restaurantPhone").value;
       const now = new Date().toLocaleString('en-IN', {timeZone: 'Asia/Kolkata'});
       const message = `🔔 *NEW ORDER*
 
@@ -105,16 +96,13 @@ ${window.orderSummary}
 
 ✅ Please prepare ASAP!`;
 
-      // Clean phone number for WhatsApp
       const cleanPhone = phone.replace(/[^0-9]/g, '');
       const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
       
-      // Open WhatsApp
       window.open(whatsappUrl, '_blank');
       
-      // Clear cart & success
       localStorage.removeItem("cart");
-      alert("✅ WhatsApp order sent successfully!\nCheck your phone/WhatsApp Web.");
+      alert("✅ Order sent to Kitchen!");
       setTimeout(() => window.location.href = "index.html", 1000);
     }
     
