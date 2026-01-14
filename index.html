@@ -6,8 +6,14 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: Arial; max-width: 600px; margin: 20px auto; padding: 20px; background: #f5f5f5; }
     h2 { text-align: center; margin-bottom: 30px; color: #333; }
-    .menu { margin-bottom: 30px; }
-    .item { background: white; padding: 20px; margin: 15px 0; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.1); }
+    .auth-section, .menu-section { background: white; padding: 25px; margin: 15px 0; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.1); display: none; }
+    .auth-section.active, .menu-section.active { display: block; }
+    .phone-input { text-align: center; margin-bottom: 20px; }
+    .phone-input input { padding: 15px; width: 250px; font-size: 18px; border: 2px solid #ddd; border-radius: 8px; text-align: center; }
+    .verify-btn { background: #27ae60; color: white; border: none; padding: 15px 35px; border-radius: 8px; font-size: 18px; cursor: pointer; width: 100%; margin-top: 10px; }
+    .verify-btn:hover { background: #229954; }
+    .otp-input { display: flex; gap: 10px; justify-content: center; margin: 20px 0; }
+    .otp-input input { width: 50px; height: 50px; font-size: 20px; text-align: center; border: 2px solid #3498db; border-radius: 8px; }
     .item-row { display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 15px; }
     .item-info { display: flex; align-items: center; gap: 20px; flex-grow: 1; }
     .item h3 { margin: 0; font-size: 24px; color: #2c3e50; }
@@ -22,43 +28,111 @@
   </style>
 </head>
 <body>
-  <h2>Table <span id="tableNo">1</span></h2>
-
-  <div class="menu">
-    <div class="item">
-      <div class="item-row">
-        <div class="item-info">
-          <h3>Burger</h3>
-          <p>₹120</p>
-        </div>
-        <div class="qty-controls">
-          <button class="qty-btn" onclick="changeQty(1, -1)">-</button>
-          <span class="qty-display" id="qty1">0</span>
-          <button class="qty-btn" onclick="changeQty(1, 1)">+</button>
-        </div>
-      </div>
+  <!-- PHONE AUTH SECTION -->
+  <div id="authSection" class="auth-section active">
+    <h2>🔐 Verify Your Phone</h2>
+    <div class="phone-input">
+      <input type="tel" id="customerPhone" placeholder="Enter your number (+91XXXXXXXXXX)">
+      <br>
+      <button class="verify-btn" onclick="sendOTP()">Send OTP</button>
     </div>
-    <div class="item">
-      <div class="item-row">
-        <div class="item-info">
-          <h3>Pizza</h3>
-          <p>₹250</p>
-        </div>
-        <div class="qty-controls">
-          <button class="qty-btn" onclick="changeQty(2, -1)">-</button>
-          <span class="qty-display" id="qty2">0</span>
-          <button class="qty-btn" onclick="changeQty(2, 1)">+</button>
-        </div>
+    
+    <div id="otpSection" style="display: none;">
+      <h3>Enter OTP sent to <span id="phoneDisplay"></span></h3>
+      <div class="otp-input">
+        <input type="text" maxlength="1">
+        <input type="text" maxlength="1">
+        <input type="text" maxlength="1">
+        <input type="text" maxlength="1">
       </div>
+      <br>
+      <button class="verify-btn" onclick="verifyOTP()">Verify & Continue</button>
     </div>
   </div>
 
-  <div class="buttons-row">
-    <button onclick="goToCart()">View Cart</button>
+  <!-- MENU SECTION (hidden until verified) -->
+  <div id="menuSection" class="menu-section">
+    <h2>Table <span id="tableNo">1</span> <span id="verifiedPhone"></span></h2>
+    
+    <div class="menu">
+      <div class="item">
+        <div class="item-row">
+          <div class="item-info">
+            <h3>Burger</h3>
+            <p>₹120</p>
+          </div>
+          <div class="qty-controls">
+            <button class="qty-btn" onclick="changeQty(1, -1)">-</button>
+            <span class="qty-display" id="qty1">0</span>
+            <button class="qty-btn" onclick="changeQty(1, 1)">+</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="item">
+        <div class="item-row">
+          <div class="item-info">
+            <h3>Pizza</h3>
+            <p>₹250</p>
+          </div>
+          <div class="qty-controls">
+            <button class="qty-btn" onclick="changeQty(2, -1)">-</button>
+            <span class="qty-display" id="qty2">0</span>
+            <button class="qty-btn" onclick="changeQty(2, 1)">+</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="buttons-row">
+      <button onclick="goToCart()">View Cart</button>
+    </div>
   </div>
 
   <script>
     let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    let verifiedPhone = '';
+    let otp = Math.floor(1000 + Math.random() * 9000); // Generate 4-digit OTP
+    
+    function sendOTP() {
+      const phone = document.getElementById('customerPhone').value;
+      if (!phone || !phone.includes('+91')) {
+        alert('Please enter valid number with +91');
+        return;
+      }
+      
+      verifiedPhone = phone;
+      document.getElementById('phoneDisplay').innerText = phone;
+      document.getElementById('otpSection').style.display = 'block';
+      document.querySelector('.phone-input').style.display = 'none';
+      
+      // Simulate SMS (in real app, send via SMS API)
+      alert(`OTP: ${otp} (sent to ${phone} for demo)`);
+    }
+    
+    function verifyOTP() {
+      const otpInputs = document.querySelectorAll('.otp-input input');
+      const enteredOTP = Array.from(otpInputs).map(input => input.value).join('');
+      
+      if (enteredOTP == otp) {
+        document.getElementById('authSection').classList.remove('active');
+        document.getElementById('menuSection').classList.add('active');
+        document.getElementById('verifiedPhone').innerText = `✅ ${verifiedPhone}`;
+        document.getElementById('tableNo').innerText = new URLSearchParams(window.location.search).get('table') || 1;
+        
+        // Load cart
+        [1,2].forEach(updateDisplay);
+      } else {
+        alert('Wrong OTP! Try again.');
+      }
+    }
+    
+    // Auto-focus next OTP input
+    document.addEventListener('input', (e) => {
+      if (e.target.parentNode.classList.contains('otp-input') && e.target.value.length === 1) {
+        e.target.nextElementSibling?.focus();
+      }
+    });
     
     function updateDisplay(id) {
       let item = cart.find(x => x.id == id);
@@ -77,14 +151,10 @@
       updateDisplay(id);
     }
     
-    // Load quantities on page load
-    [1,2].forEach(updateDisplay);
-    
     function goToCart() {
-      window.open('cart.html?table=1', '_blank');
+      if (!verifiedPhone) return alert('Please verify phone first!');
+      window.open('cart.html?table=1&phone=' + encodeURIComponent(verifiedPhone), '_blank');
     }
-    
-    document.getElementById('tableNo').innerText = new URLSearchParams(window.location.search).get('table') || 1;
   </script>
 </body>
 </html>
