@@ -20,11 +20,19 @@
       border-radius: 10px; 
       box-shadow: 0 3px 10px rgba(0,0,0,0.1);
     }
-    .item-header { 
+    /* ALL THREE on same line */
+    .item-row { 
       display: flex; 
       justify-content: space-between; 
       align-items: center; 
+      gap: 15px;
       margin-bottom: 15px; 
+    }
+    .item-info {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-grow: 1;
     }
     .item h3 { 
       margin: 0; 
@@ -36,18 +44,32 @@
       font-size: 22px; 
       color: #e74c3c; 
       font-weight: bold; 
+      white-space: nowrap;
     }
-    .item button { 
+    .qty-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .qty-btn { 
+      width: 35px; 
+      height: 35px; 
       background: #27ae60; 
       color: white; 
       border: none; 
-      padding: 10px 25px; 
-      border-radius: 6px; 
-      font-size: 16px; 
+      border-radius: 50%; 
+      font-size: 18px; 
+      font-weight: bold; 
       cursor: pointer; 
-      float: right; 
     }
-    .item button:hover { background: #229954; }
+    .qty-btn:hover { background: #229954; }
+    .qty-display {
+      min-width: 30px;
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+      color: #333;
+    }
     .buttons-row { 
       text-align: center; 
       margin-top: 20px; 
@@ -70,11 +92,31 @@
 
   <div class="menu">
     <div class="item">
-      <div class="item-header">
-        <h3>Burger</h3>
-        <p>₹120</p>
+      <div class="item-row">
+        <div class="item-info">
+          <h3>Burger</h3>
+          <p>₹120</p>
+        </div>
+        <div class="qty-controls">
+          <button class="qty-btn" onclick="changeQty(1, -1)">-</button>
+          <span class="qty-display" id="qty1">0</span>
+          <button class="qty-btn" onclick="changeQty(1, 1)">+</button>
+        </div>
       </div>
-      <button onclick="addToCart(1)">Add</button>
+    </div>
+    
+    <div class="item">
+      <div class="item-row">
+        <div class="item-info">
+          <h3>Pizza</h3>
+          <p>₹250</p>
+        </div>
+        <div class="qty-controls">
+          <button class="qty-btn" onclick="changeQty(2, -1)">-</button>
+          <span class="qty-display" id="qty2">0</span>
+          <button class="qty-btn" onclick="changeQty(2, 1)">+</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -83,17 +125,26 @@
   </div>
 
   <script>
-    function addToCart(id) {
-      let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-      let item = cart.find(x => x.id === id);
-      if (item) item.qty++;
-      else cart.push({id, qty: 1});
-      localStorage.setItem('cart', JSON.stringify(cart));
-      alert('Added to cart!');
+    let quantities = JSON.parse(localStorage.getItem('quantities') || '{}');
+    
+    function updateDisplay(id) {
+      document.getElementById('qty' + id).innerText = quantities[id] || 0;
     }
+    
+    function changeQty(id, change) {
+      quantities[id] = (quantities[id] || 0) + change;
+      if (quantities[id] < 0) quantities[id] = 0;
+      localStorage.setItem('quantities', JSON.stringify(quantities));
+      updateDisplay(id);
+    }
+    
+    // Load existing quantities
+    [1,2].forEach(updateDisplay);
+    
     function goToCart() {
       window.open('cart.html?table=1', '_blank');
     }
+    
     document.getElementById('tableNo').innerText = new URLSearchParams(window.location.search).get('table') || 1;
   </script>
 </body>
