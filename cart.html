@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Cart</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<h2>Table <span id="tableNo"></span> - Your Cart</h2>
+
+<table border="1" width="100%" cellpadding="10">
+  <thead>
+    <tr>
+      <th>Item</th>
+      <th>Price</th>
+      <th>Qty</th>
+      <th>Total</th>
+      <th>Remove</th>
+    </tr>
+  </thead>
+  <tbody id="cartItems">
+  </tbody>
+</table>
+
+<h3 id="grandTotal"></h3>
+
+<button onclick="placeOrder()">Place Order</button>
+<button onclick="goBack()">Back to Menu</button>
+
+<script>
+  const menu = {
+    1: { name: "Burger", price: 120 },
+    2: { name: "Pizza", price: 250 },
+    3: { name: "Pasta", price: 180 }
+  };
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const tableNo = urlParams.get('table') || 1;
+  document.getElementById("tableNo").innerText = tableNo;
+
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+  function renderCart() {
+    const tbody = document.getElementById("cartItems");
+    tbody.innerHTML = "";
+    let grandTotal = 0;
+
+    cart.forEach((item, index) => {
+      const menuItem = menu[item.id];
+      const itemTotal = menuItem.price * item.qty;
+      grandTotal += itemTotal;
+
+      tbody.innerHTML += `
+        <tr>
+          <td>${menuItem.name}</td>
+          <td>₹${menuItem.price}</td>
+          <td>
+            <button onclick="changeQty(${index}, -1)">-</button>
+            ${item.qty}
+            <button onclick="changeQty(${index}, 1)">+</button>
+          </td>
+          <td>₹${itemTotal}</td>
+          <td><button onclick="removeItem(${index})">X</button></td>
+        </tr>
+      `;
+    });
+
+    document.getElementById("grandTotal").innerText =
+      "Grand Total: ₹" + grandTotal;
+  }
+
+  function changeQty(index, change) {
+    cart[index].qty += change;
+    if (cart[index].qty <= 0) {
+      cart.splice(index, 1);
+    }
+    localStorage.setItem("cart", JSON.stringify(cart));
+    renderCart();
+  }
+
+  function removeItem(index) {
+    cart.splice(index, 1);
+    localStorage.setItem("cart", JSON.stringify(cart));
+    renderCart();
+  }
+
+  function placeOrder() {
+    if (cart.length === 0) {
+      alert("Cart is empty!");
+      return;
+    }
+
+    const order = {
+      table: tableNo,
+      items: cart,
+      time: new Date().toISOString()
+    };
+
+    console.log("Order Placed:", order);
+    alert("Order placed successfully!");
+
+    localStorage.removeItem("cart");
+    window.location.href = "index.html?table=" + tableNo;
+  }
+
+  function goBack() {
+    window.location.href = "index.html?table=" + tableNo;
+  }
+
+  renderCart();
+</script>
+
+</body>
+</html>
