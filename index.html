@@ -4,86 +4,20 @@
   <title>Table Order</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { 
-      font-family: Arial; 
-      max-width: 600px; 
-      margin: 20px auto; 
-      padding: 20px; 
-      background: #f5f5f5; 
-    }
+    body { font-family: Arial; max-width: 600px; margin: 20px auto; padding: 20px; background: #f5f5f5; }
     h2 { text-align: center; margin-bottom: 30px; color: #333; }
     .menu { margin-bottom: 30px; }
-    .item { 
-      background: white; 
-      padding: 20px; 
-      margin: 15px 0; 
-      border-radius: 10px; 
-      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-    }
-    /* ALL THREE on same line */
-    .item-row { 
-      display: flex; 
-      justify-content: space-between; 
-      align-items: center; 
-      gap: 15px;
-      margin-bottom: 15px; 
-    }
-    .item-info {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      flex-grow: 1;
-    }
-    .item h3 { 
-      margin: 0; 
-      font-size: 24px; 
-      color: #2c3e50; 
-    }
-    .item p { 
-      margin: 0; 
-      font-size: 22px; 
-      color: #e74c3c; 
-      font-weight: bold; 
-      white-space: nowrap;
-    }
-    .qty-controls {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .qty-btn { 
-      width: 35px; 
-      height: 35px; 
-      background: #27ae60; 
-      color: white; 
-      border: none; 
-      border-radius: 50%; 
-      font-size: 18px; 
-      font-weight: bold; 
-      cursor: pointer; 
-    }
+    .item { background: white; padding: 20px; margin: 15px 0; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.1); }
+    .item-row { display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 15px; }
+    .item-info { display: flex; align-items: center; gap: 20px; flex-grow: 1; }
+    .item h3 { margin: 0; font-size: 24px; color: #2c3e50; }
+    .item p { margin: 0; font-size: 22px; color: #e74c3c; font-weight: bold; white-space: nowrap; }
+    .qty-controls { display: flex; align-items: center; gap: 8px; }
+    .qty-btn { width: 35px; height: 35px; background: #27ae60; color: white; border: none; border-radius: 50%; font-size: 18px; font-weight: bold; cursor: pointer; }
     .qty-btn:hover { background: #229954; }
-    .qty-display {
-      min-width: 30px;
-      text-align: center;
-      font-size: 18px;
-      font-weight: bold;
-      color: #333;
-    }
-    .buttons-row { 
-      text-align: center; 
-      margin-top: 20px; 
-    }
-    .buttons-row button { 
-      background: #3498db; 
-      color: white; 
-      border: none; 
-      padding: 12px 30px; 
-      border-radius: 6px; 
-      font-size: 16px; 
-      cursor: pointer; 
-      margin: 0 10px; 
-    }
+    .qty-display { min-width: 30px; text-align: center; font-size: 18px; font-weight: bold; color: #333; }
+    .buttons-row { text-align: center; margin-top: 20px; }
+    .buttons-row button { background: #3498db; color: white; border: none; padding: 12px 30px; border-radius: 6px; font-size: 16px; cursor: pointer; margin: 0 10px; }
     .buttons-row button:hover { background: #2980b9; }
   </style>
 </head>
@@ -104,7 +38,6 @@
         </div>
       </div>
     </div>
-    
     <div class="item">
       <div class="item-row">
         <div class="item-info">
@@ -125,20 +58,26 @@
   </div>
 
   <script>
-    let quantities = JSON.parse(localStorage.getItem('quantities') || '{}');
+    let cart = JSON.parse(localStorage.getItem('cart') || '[]');
     
     function updateDisplay(id) {
-      document.getElementById('qty' + id).innerText = quantities[id] || 0;
+      let item = cart.find(x => x.id == id);
+      document.getElementById('qty' + id).innerText = item ? item.qty : 0;
     }
     
     function changeQty(id, change) {
-      quantities[id] = (quantities[id] || 0) + change;
-      if (quantities[id] < 0) quantities[id] = 0;
-      localStorage.setItem('quantities', JSON.stringify(quantities));
+      let item = cart.find(x => x.id == id);
+      if (item) {
+        item.qty += change;
+        if (item.qty <= 0) cart = cart.filter(x => x.id != id);
+      } else if (change > 0) {
+        cart.push({id: id, qty: 1});
+      }
+      localStorage.setItem('cart', JSON.stringify(cart));
       updateDisplay(id);
     }
     
-    // Load existing quantities
+    // Load quantities on page load
     [1,2].forEach(updateDisplay);
     
     function goToCart() {
