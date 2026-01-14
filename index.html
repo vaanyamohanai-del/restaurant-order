@@ -13,188 +13,173 @@
       min-height: 100vh;
     }
     .container { background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); overflow: hidden; }
-    h2 { text-align: center; padding: 25px; background: linear-gradient(45deg, #27ae60, #2ecc71); color: white; }
+    h2 { text-align: center; padding: 25px; background: linear-gradient(45deg, #27ae60, #2ecc71); color: white; margin: 0; }
     .auth-section, .menu-section { padding: 30px; display: none; }
     .auth-section.active, .menu-section.active { display: block; }
-
+    
     .phone-input { text-align: center; margin-bottom: 25px; }
-    .phone-input input {
-      padding: 18px; width: 300px; font-size: 18px;
-      border: 3px solid #e1e8ed; border-radius: 12px; text-align: center;
-    }
-    .verify-btn {
-      background: linear-gradient(45deg, #3498db, #2980b9);
-      color: white; border: none; padding: 18px 40px;
-      border-radius: 12px; font-size: 18px; cursor: pointer;
-      width: 100%; margin-top: 15px;
-    }
-
+    .phone-input input { padding: 18px; width: 300px; font-size: 18px; border: 3px solid #e1e8ed; border-radius: 12px; text-align: center; font-weight: bold; }
+    .verify-btn { background: linear-gradient(45deg, #3498db, #2980b9); color: white; border: none; padding: 18px 40px; border-radius: 12px; font-size: 18px; cursor: pointer; width: 100%; margin-top: 15px; transition: all 0.3s; }
+    .verify-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(52,152,219,0.4); }
+    
     .otp-section { text-align: center; }
     .otp-input { display: flex; gap: 15px; justify-content: center; margin: 25px 0; }
-    .otp-input input {
-      width: 60px; height: 60px; font-size: 24px;
-      text-align: center; border: 3px solid #3498db;
-      border-radius: 12px;
-    }
-
-    .item { background: #f8f9fa; padding: 25px; margin: 20px 0; border-radius: 15px; }
-    .item-row { display: flex; justify-content: space-between; align-items: center; }
-    .item h3 { font-size: 26px; }
-    .item p { font-size: 22px; color: #e74c3c; font-weight: bold; }
-
+    .otp-input input { width: 60px; height: 60px; font-size: 24px; text-align: center; border: 3px solid #3498db; border-radius: 12px; font-weight: bold; }
+    
+    .item { background: #f8f9fa; padding: 25px; margin: 20px 0; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); }
+    .item-row { display: flex; justify-content: space-between; align-items: center; gap: 20px; }
+    .item-info { display: flex; align-items: center; gap: 25px; flex-grow: 1; }
+    .item h3 { margin: 0; font-size: 28px; color: #2c3e50; }
+    .item p { margin: 0; font-size: 24px; color: #e74c3c; font-weight: bold; }
     .qty-controls { display: flex; align-items: center; gap: 12px; }
-    .qty-btn {
-      width: 45px; height: 45px;
-      background: #27ae60; color: white;
-      border: none; border-radius: 50%;
-      font-size: 20px; cursor: pointer;
-    }
-    .qty-display {
-      min-width: 40px; text-align: center;
-      font-size: 22px; font-weight: bold;
-    }
-
+    .qty-btn { width: 45px; height: 45px; background: linear-gradient(45deg, #27ae60, #2ecc71); color: white; border: none; border-radius: 50%; font-size: 20px; font-weight: bold; cursor: pointer; transition: all 0.3s; }
+    .qty-btn:hover { transform: scale(1.1); box-shadow: 0 5px 15px rgba(39,174,96,0.4); }
+    .qty-display { min-width: 40px; text-align: center; font-size: 22px; font-weight: bold; color: #34495e; background: white; padding: 8px 12px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    
     .buttons-row { text-align: center; margin-top: 30px; }
-    .buttons-row button {
-      background: #3498db; color: white;
-      border: none; padding: 18px 40px;
-      border-radius: 12px; font-size: 18px;
-      cursor: pointer;
-    }
-
-    .verified-badge {
-      background: #27ae60; color: white;
-      padding: 6px 14px; border-radius: 20px;
-      font-size: 14px; margin-left: 10px;
-    }
+    .buttons-row button { background: linear-gradient(45deg, #3498db, #2980b9); color: white; border: none; padding: 18px 40px; border-radius: 12px; font-size: 18px; cursor: pointer; margin: 0 10px; transition: all 0.3s; box-shadow: 0 5px 15px rgba(52,152,219,0.3); }
+    .buttons-row button:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(52,152,219,0.4); }
+    
+    .verified-badge { background: linear-gradient(45deg, #27ae60, #2ecc71); color: white; padding: 5px 15px; border-radius: 20px; font-size: 14px; font-weight: bold; margin-left: 15px; }
   </style>
 </head>
-
 <body>
   <div class="container">
-
-    <!-- AUTH SECTION -->
+    <!-- PHONE AUTH SECTION -->
     <div id="authSection" class="auth-section active">
       <h2>🔐 Verify Your Phone</h2>
-
       <div class="phone-input">
-        <input type="tel" id="customerPhone" placeholder="Enter WhatsApp number (+91XXXXXXXXXX)">
-        <button class="verify-btn" onclick="sendOTP()">Send OTP</button>
+        <input type="tel" id="customerPhone" placeholder="Enter your WhatsApp number (+91XXXXXXXXXX)">
+        <br>
+        <button class="verify-btn" onclick="sendWhatsAppOTP()">📱 Send WhatsApp OTP</button>
       </div>
-
-      <div id="otpSection" class="otp-section" style="display:none;">
-        <h3>Enter OTP sent to <span id="phoneDisplay"></span></h3>
+      
+      <div id="otpSection" style="display: none;" class="otp-section">
+        <h3>Check WhatsApp: OTP sent to <span id="phoneDisplay"></span></h3>
         <div class="otp-input">
-          <input maxlength="1">
-          <input maxlength="1">
-          <input maxlength="1">
-          <input maxlength="1">
+          <input type="text" maxlength="1">
+          <input type="text" maxlength="1">
+          <input type="text" maxlength="1">
+          <input type="text" maxlength="1">
         </div>
-        <button class="verify-btn" onclick="verifyOTP()">Verify & Continue</button>
+        <br>
+        <button class="verify-btn" onclick="verifyOTP()">✅ Verify & Continue</button>
       </div>
     </div>
 
     <!-- MENU SECTION -->
     <div id="menuSection" class="menu-section">
-      <h2>🍽️ Table <span id="tableNo">1</span>
-        <span class="verified-badge">Verified</span>
-      </h2>
-
+      <h2>🍽️ Table <span id="tableNo">1</span> <span id="verifiedPhone"></span></h2>
+      
       <div class="item">
         <div class="item-row">
-          <h3>🍔 Burger</h3>
-          <p>₹120</p>
+          <div class="item-info">
+            <h3>🍔 Burger</h3>
+            <p>₹120</p>
+          </div>
           <div class="qty-controls">
-            <button class="qty-btn" onclick="changeQty(1,-1)">-</button>
+            <button class="qty-btn" onclick="changeQty(1, -1)">-</button>
             <span class="qty-display" id="qty1">0</span>
-            <button class="qty-btn" onclick="changeQty(1,1)">+</button>
+            <button class="qty-btn" onclick="changeQty(1, 1)">+</button>
           </div>
         </div>
       </div>
-
+      
       <div class="item">
         <div class="item-row">
-          <h3>🍕 Pizza</h3>
-          <p>₹250</p>
+          <div class="item-info">
+            <h3>🍕 Pizza</h3>
+            <p>₹250</p>
+          </div>
           <div class="qty-controls">
-            <button class="qty-btn" onclick="changeQty(2,-1)">-</button>
+            <button class="qty-btn" onclick="changeQty(2, -1)">-</button>
             <span class="qty-display" id="qty2">0</span>
-            <button class="qty-btn" onclick="changeQty(2,1)">+</button>
+            <button class="qty-btn" onclick="changeQty(2, 1)">+</button>
           </div>
         </div>
       </div>
-
+      
       <div class="buttons-row">
         <button onclick="goToCart()">🛒 View Cart</button>
       </div>
     </div>
-
   </div>
 
-<script>
-  let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-  let otp = '';
-  let verifiedPhone = '';
-
-  function sendOTP() {
-    const phone = document.getElementById('customerPhone').value;
-    if (!phone.includes('+91')) {
-      alert('Enter valid phone with +91');
-      return;
+  <script>
+    let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    let verifiedPhone = '';
+    let otp = Math.floor(1000 + Math.random() * 9000);
+    
+    // WhatsApp OTP Function
+    function sendWhatsAppOTP() {
+      const phone = document.getElementById('customerPhone').value;
+      if (!phone || !phone.includes('+91')) {
+        alert('❌ Please enter valid WhatsApp number with +91');
+        return;
+      }
+      
+      verifiedPhone = phone;
+      document.getElementById('phoneDisplay').innerText = phone;
+      document.getElementById('otpSection').style.display = 'block';
+      document.querySelector('.phone-input').style.display = 'none';
+      
+      // Send OTP via WhatsApp
+      const otpMessage = `🍽️ *Table Order Verification*\n\nYour OTP is: *${otp}*\n\nEnter this code in the app to continue ordering.\nValid for 5 minutes.\n\nThank you!`;
+      const cleanPhone = phone.replace(/[^0-9]/g, '');
+      const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(otpMessage)}`;
+      
+      window.open(whatsappUrl, '_blank');
+      alert(`✅ WhatsApp opened with your OTP ${otp}!\nCopy the 4-digit code and paste it below.`);
     }
-    verifiedPhone = phone;
-    otp = Math.floor(1000 + Math.random() * 9000).toString();
-
-    document.getElementById('phoneDisplay').innerText = phone;
-    document.getElementById('otpSection').style.display = 'block';
-    document.querySelector('.phone-input').style.display = 'none';
-
-    console.log('Generated OTP (demo):', otp);
-  }
-
-  function verifyOTP() {
-    const entered = [...document.querySelectorAll('.otp-input input')]
-      .map(i => i.value).join('');
-
-    if (entered === otp) {
-      document.getElementById('authSection').classList.remove('active');
-      document.getElementById('menuSection').classList.add('active');
-
-      document.getElementById('tableNo').innerText =
-        new URLSearchParams(location.search).get('table') || 1;
-
-      [1,2].forEach(updateDisplay);
-    } else {
-      alert('Wrong OTP');
+    
+    function verifyOTP() {
+      const otpInputs = document.querySelectorAll('.otp-input input');
+      const enteredOTP = Array.from(otpInputs).map(input => input.value).join('');
+      
+      if (enteredOTP == otp) {
+        document.getElementById('authSection').classList.remove('active');
+        document.getElementById('menuSection').classList.add('active');
+        document.getElementById('verifiedPhone').innerHTML = `<span class="verified-badge">Verified</span>`;
+        document.getElementById('tableNo').innerText = new URLSearchParams(window.location.search).get('table') || 1;
+        
+        // Load existing cart quantities
+        [1,2].forEach(updateDisplay);
+        alert('✅ Phone verified! Happy ordering! 🍽️');
+      } else {
+        alert('❌ Wrong OTP! Please check WhatsApp and try again.');
+        otpInputs.forEach(input => input.value = '');
+        otpInputs[0].focus();
+      }
     }
-  }
-
-  document.addEventListener('input', e => {
-    if (e.target.parentElement.classList.contains('otp-input') && e.target.value)
-      e.target.nextElementSibling?.focus();
-  });
-
-  function updateDisplay(id) {
-    const item = cart.find(i => i.id === id);
-    document.getElementById('qty' + id).innerText = item ? item.qty : 0;
-  }
-
-  function changeQty(id, change) {
-    let item = cart.find(i => i.id === id);
-    if (item) {
-      item.qty += change;
-      if (item.qty <= 0) cart = cart.filter(i => i.id !== id);
-    } else if (change > 0) {
-      cart.push({ id, qty: 1 });
+    
+    // Auto-focus next OTP input
+    document.addEventListener('input', (e) => {
+      if (e.target.parentNode.classList.contains('otp-input') && e.target.value.length === 1) {
+        e.target.nextElementSibling?.focus();
+      }
+    });
+    
+    function updateDisplay(id) {
+      let item = cart.find(x => x.id == id);
+      document.getElementById('qty' + id).innerText = item ? item.qty : 0;
     }
-    localStorage.setItem('cart', JSON.stringify(cart));
-    updateDisplay(id);
-  }
-
-  function goToCart() {
-    window.location.href = `cart.html?table=1&phone=${encodeURIComponent(verifiedPhone)}`;
-  }
-</script>
-
+    
+    function changeQty(id, change) {
+      let item = cart.find(x => x.id == id);
+      if (item) {
+        item.qty += change;
+        if (item.qty <= 0) cart = cart.filter(x => x.id != id);
+      } else if (change > 0) {
+        cart.push({id: id, qty: 1});
+      }
+      localStorage.setItem('cart', JSON.stringify(cart));
+      updateDisplay(id);
+    }
+    
+    function goToCart() {
+      if (!verifiedPhone) return alert('❌ Please verify your phone first!');
+      window.open(`cart.html?table=1&phone=${encodeURIComponent(verifiedPhone)}`, '_blank');
+    }
+  </script>
 </body>
 </html>
