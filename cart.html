@@ -36,6 +36,8 @@
 
   <script>
     const menu = {1: {name:"Burger", price:120}, 2:{name:"Pizza", price:250}};
+    let verifiedPhone = new URLSearchParams(window.location.search).get('phone') || '';
+    document.getElementById("tableNo").innerText = tableNo + (verifiedPhone ? ` (${verifiedPhone})` : '');
     let tableNo = new URLSearchParams(window.location.search).get('table') || 1;
     document.getElementById("tableNo").innerText = tableNo;
     let cart = JSON.parse(localStorage.getItem("cart") || "[]");
