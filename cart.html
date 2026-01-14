@@ -1,116 +1,66 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
   <title>Cart</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="css/style.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Arial; max-width: 600px; margin: 20px auto; padding: 20px; }
+    h2 { text-align: center; color: #333; margin-bottom: 20px; }
+    table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 3px 10px rgba(0,0,0,0.1); }
+    th, td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
+    th { background: #3498db; color: white; }
+    button { padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+    .qty-btn { background: #95a5a6; color: white; margin: 0 2px; }
+    .remove-btn { background: #e74c3c; color: white; }
+    .place-order { background: #27ae60; color: white; padding: 12px 30px; font-size: 16px; margin: 20px 10px 0 0; }
+    .back-btn { background: #3498db; color: white; padding: 12px 30px; font-size: 16px; }
+  </style>
 </head>
 <body>
+  <h2>Table <span id="tableNo"></span> - Your Cart</h2>
+  <table>
+    <thead>
+      <tr><th>Item</th><th>Price</th><th>Qty</th><th>Total</th><th></th></tr>
+    </thead>
+    <tbody id="cartItems"></tbody>
+  </table>
+  <h3 id="grandTotal" style="text-align: right; margin: 20px 0;"></h3>
+  <div style="text-align: center;">
+    <button class="place-order" onclick="placeOrder()">Place Order</button>
+    <button class="back-btn" onclick="goBack()">Back to Menu</button>
+  </div>
 
-<h2>Table <span id="tableNo"></span> - Your Cart</h2>
-
-<table border="1" width="100%" cellpadding="10">
-  <thead>
-    <tr>
-      <th>Item</th>
-      <th>Price</th>
-      <th>Qty</th>
-      <th>Total</th>
-      <th>Remove</th>
-    </tr>
-  </thead>
-  <tbody id="cartItems">
-  </tbody>
-</table>
-
-<h3 id="grandTotal"></h3>
-
-<button onclick="placeOrder()">Place Order</button>
-<button onclick="goBack()">Back to Menu</button>
-
-<script>
-  const menu = {
-    1: { name: "Burger", price: 120 },
-    2: { name: "Pizza", price: 250 },
-    3: { name: "Pasta", price: 180 }
-  };
-
-  const urlParams = new URLSearchParams(window.location.search);
-  const tableNo = urlParams.get('table') || 1;
-  document.getElementById("tableNo").innerText = tableNo;
-
-  let cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-  function renderCart() {
-    const tbody = document.getElementById("cartItems");
-    tbody.innerHTML = "";
-    let grandTotal = 0;
-
-    cart.forEach((item, index) => {
-      const menuItem = menu[item.id];
-      const itemTotal = menuItem.price * item.qty;
-      grandTotal += itemTotal;
-
-      tbody.innerHTML += `
-        <tr>
+  <script>
+    const menu = {1: {name:"Burger", price:120}, 2:{name:"Pizza", price:250}, 3:{name:"Pasta", price:180}};
+    let tableNo = new URLSearchParams(window.location.search).get('table') || 1;
+    document.getElementById("tableNo").innerText = tableNo;
+    let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+    
+    function renderCart() {
+      let tbody = document.getElementById("cartItems");
+      tbody.innerHTML = ""; let total = 0;
+      cart.forEach((item, i) => {
+        let menuItem = menu[item.id]; let itemTotal = menuItem.price * item.qty;
+        total += itemTotal;
+        tbody.innerHTML += `<tr>
           <td>${menuItem.name}</td>
           <td>₹${menuItem.price}</td>
-          <td>
-            <button onclick="changeQty(${index}, -1)">-</button>
-            ${item.qty}
-            <button onclick="changeQty(${index}, 1)">+</button>
-          </td>
+          <td><button class="qty-btn" onclick="changeQty(${i},-1)">-</button>${item.qty}<button class="qty-btn" onclick="changeQty(${i},1)">+</button></td>
           <td>₹${itemTotal}</td>
-          <td><button onclick="removeItem(${index})">X</button></td>
-        </tr>
-      `;
-    });
-
-    document.getElementById("grandTotal").innerText =
-      "Grand Total: ₹" + grandTotal;
-  }
-
-  function changeQty(index, change) {
-    cart[index].qty += change;
-    if (cart[index].qty <= 0) {
-      cart.splice(index, 1);
+          <td><button class="remove-btn" onclick="removeItem(${i})">X</button></td>
+        </tr>`;
+      });
+      document.getElementById("grandTotal").innerText = `Grand Total: ₹${total}`;
     }
-    localStorage.setItem("cart", JSON.stringify(cart));
-    renderCart();
-  }
-
-  function removeItem(index) {
-    cart.splice(index, 1);
-    localStorage.setItem("cart", JSON.stringify(cart));
-    renderCart();
-  }
-
-  function placeOrder() {
-    if (cart.length === 0) {
-      alert("Cart is empty!");
-      return;
+    
+    function changeQty(i, change) {
+      cart[i].qty += change; if (cart[i].qty <= 0) cart.splice(i,1);
+      localStorage.setItem("cart", JSON.stringify(cart)); renderCart();
     }
-
-    const order = {
-      table: tableNo,
-      items: cart,
-      time: new Date().toISOString()
-    };
-
-    console.log("Order Placed:", order);
-    alert("Order placed successfully!");
-
-    localStorage.removeItem("cart");
-    window.location.href = "index.html?table=" + tableNo;
-  }
-
-  function goBack() {
-    window.location.href = "index.html?table=" + tableNo;
-  }
-
-  renderCart();
-</script>
-
+    function removeItem(i) { cart.splice(i,1); localStorage.setItem("cart", JSON.stringify(cart)); renderCart(); }
+    function placeOrder() { if (cart.length===0) return alert("Cart empty!"); alert("Order placed!"); localStorage.removeItem("cart"); window.location.href="index.html"; }
+    function goBack() { window.location.href="index.html"; }
+    renderCart();
+  </script>
 </body>
 </html>
