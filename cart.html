@@ -24,10 +24,10 @@
     <tbody id="cartItems"></tbody>
   </table>
   
-  <h3 id="grandTotal" style="text-align: right; margin: 20px 0; font-size: 24px;"></h3>
+  <h3 id="grandTotal" style="text-align: right; margin: 20px 0; font-size: 24px;">Grand Total: ₹0</h3>
   
-  <!-- HIDDEN FROM CUSTOMER -->
-  <input type="hidden" id="restaurantPhone" value="+919342179559">
+  <!-- HIDDEN restaurant number -->
+  <input type="hidden" id="restaurantPhone" value="+919876543210">
   
   <div style="text-align: center;">
     <button class="place-order" onclick="placeOrder()">🚀 Send Order to Kitchen</button>
@@ -35,11 +35,14 @@
   </div>
 
   <script>
+    // FIXED - Put these at the VERY TOP
     const menu = {1: {name:"Burger", price:120}, 2:{name:"Pizza", price:250}};
-    let verifiedPhone = new URLSearchParams(window.location.search).get('phone') || '';
-    document.getElementById("tableNo").innerText = tableNo + (verifiedPhone ? ` (${verifiedPhone})` : '');
     let tableNo = new URLSearchParams(window.location.search).get('table') || 1;
-    document.getElementById("tableNo").innerText = tableNo;
+    let verifiedPhone = new URLSearchParams(window.location.search).get('phone') || '';
+    
+    // FIXED - Set table number FIRST
+    document.getElementById("tableNo").innerText = tableNo + (verifiedPhone ? ` (${verifiedPhone})` : '');
+    
     let cart = JSON.parse(localStorage.getItem("cart") || "[]");
     
     function renderCart() {
@@ -110,6 +113,7 @@ ${window.orderSummary}
     
     function goBack() { window.location.href="index.html"; }
     
+    // FIXED - Call renderCart() at the END
     renderCart();
   </script>
 </body>
