@@ -2,7 +2,68 @@
 <html>
 <head>
   <title>Table Order</title>
-  <link rel="stylesheet" href="css/style.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: Arial; 
+      max-width: 600px; 
+      margin: 20px auto; 
+      padding: 20px; 
+      background: #f5f5f5; 
+    }
+    h2 { text-align: center; margin-bottom: 30px; color: #333; }
+    .menu { margin-bottom: 30px; }
+    .item { 
+      background: white; 
+      padding: 20px; 
+      margin: 15px 0; 
+      border-radius: 10px; 
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+    .item-header { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      margin-bottom: 15px; 
+    }
+    .item h3 { 
+      margin: 0; 
+      font-size: 24px; 
+      color: #2c3e50; 
+    }
+    .item p { 
+      margin: 0; 
+      font-size: 22px; 
+      color: #e74c3c; 
+      font-weight: bold; 
+    }
+    .item button { 
+      background: #27ae60; 
+      color: white; 
+      border: none; 
+      padding: 10px 25px; 
+      border-radius: 6px; 
+      font-size: 16px; 
+      cursor: pointer; 
+      float: right; 
+    }
+    .item button:hover { background: #229954; }
+    .buttons-row { 
+      text-align: center; 
+      margin-top: 20px; 
+    }
+    .buttons-row button { 
+      background: #3498db; 
+      color: white; 
+      border: none; 
+      padding: 12px 30px; 
+      border-radius: 6px; 
+      font-size: 16px; 
+      cursor: pointer; 
+      margin: 0 10px; 
+    }
+    .buttons-row button:hover { background: #2980b9; }
+  </style>
 </head>
 <body>
   <h2>Table <span id="tableNo">1</span></h2>
@@ -17,11 +78,23 @@
     </div>
   </div>
 
-  <!-- FIXED: Buttons on same line -->
   <div class="buttons-row">
     <button onclick="goToCart()">View Cart</button>
   </div>
 
-  <script src="js/app.js"></script>
+  <script>
+    function addToCart(id) {
+      let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      let item = cart.find(x => x.id === id);
+      if (item) item.qty++;
+      else cart.push({id, qty: 1});
+      localStorage.setItem('cart', JSON.stringify(cart));
+      alert('Added to cart!');
+    }
+    function goToCart() {
+      window.open('cart.html?table=1', '_blank');
+    }
+    document.getElementById('tableNo').innerText = new URLSearchParams(window.location.search).get('table') || 1;
+  </script>
 </body>
 </html>
