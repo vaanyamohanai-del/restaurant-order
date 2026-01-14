@@ -19,12 +19,10 @@ h2 {
   margin-bottom: 20px;
 }
 
-/* Menu container */
 .menu {
   margin-bottom: 20px;
 }
 
-/* Item card - FIXED */
 .item {
   background: white;
   border: 1px solid #ddd;
@@ -34,7 +32,6 @@ h2 {
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-/* Header line - FIXED to work */
 .item-header {
   display: flex !important;
   justify-content: space-between !important;
@@ -58,39 +55,45 @@ h2 {
   white-space: nowrap !important;
 }
 
-/* Fixed button size */
+/* FIXED: Small Add button */
 .item button {
-  display: block !important;
-  width: 100% !important;
-  padding: 12px 20px !important;
+  display: inline-block !important;
+  width: auto !important;
+  padding: 8px 16px !important;  /* Smaller padding */
   background: #27ae60 !important;
   color: white !important;
   border: none !important;
   border-radius: 6px !important;
-  font-size: 1.1em !important;
-  font-weight: bold !important;
+  font-size: 1em !important;
   cursor: pointer !important;
   transition: background 0.3s !important;
+  min-width: 80px;  /* Minimum width but not full width */
 }
 
 .item button:hover {
   background: #229954 !important;
 }
 
-/* View Cart button */
-button[onclick="goToCart()"] {
-  display: block;
-  width: 200px;
-  margin: 0 auto;
-  padding: 15px;
-  background: #3498db;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 1.2em;
-  cursor: pointer;
+/* FIXED: Small buttons on same line */
+.buttons-row {
+  display: flex !important;
+  gap: 15px !important;
+  justify-content: center !important;
+  align-items: center !important;
+  margin-top: 20px !important;
 }
 
-button[onclick="goToCart()"]:hover {
-  background: #2980b9;
+.buttons-row button {
+  padding: 10px 20px !important;
+  background: #3498db !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 6px !important;
+  font-size: 1em !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+  min-width: 120px !important;
 }
+
+.buttons-row bu
