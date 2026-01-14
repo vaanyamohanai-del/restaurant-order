@@ -14,6 +14,7 @@
     .remove-btn { background: #e74c3c; color: white; }
     .place-order { background: #27ae60; color: white; padding: 12px 30px; font-size: 16px; margin: 20px 10px 0 0; }
     .back-btn { background: #3498db; color: white; padding: 12px 30px; font-size: 16px; }
+    .sms-preview { background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 15px 0; font-family: monospace; }
   </style>
 </head>
 <body>
@@ -25,13 +26,19 @@
     <tbody id="cartItems"></tbody>
   </table>
   <h3 id="grandTotal" style="text-align: right; margin: 20px 0;"></h3>
+  
+  <!-- SMS Phone Input -->
+  <div style="margin: 20px 0;">
+    <label>Restaurant Phone (for SMS): <input type="tel" id="restaurantPhone" value="+919342179559" style="padding: 8px; width: 200px;"></label>
+  </div>
+  
   <div style="text-align: center;">
-    <button class="place-order" onclick="placeOrder()">Place Order</button>
+    <button class="place-order" onclick="placeOrder()">Place Order & Send SMS</button>
     <button class="back-btn" onclick="goBack()">Back to Menu</button>
   </div>
 
   <script>
-    const menu = {1: {name:"Burger", price:120}, 2:{name:"Pizza", price:250}, 3:{name:"Pasta", price:180}};
+    const menu = {1: {name:"Burger", price:120}, 2:{name:"Pizza", price:250}};
     let tableNo = new URLSearchParams(window.location.search).get('table') || 1;
     document.getElementById("tableNo").innerText = tableNo;
     let cart = JSON.parse(localStorage.getItem("cart") || "[]");
@@ -39,9 +46,14 @@
     function renderCart() {
       let tbody = document.getElementById("cartItems");
       tbody.innerHTML = ""; let total = 0;
+      let orderItems = [];
+      
       cart.forEach((item, i) => {
-        let menuItem = menu[item.id]; let itemTotal = menuItem.price * item.qty;
+        let menuItem = menu[item.id]; 
+        let itemTotal = menuItem.price * item.qty;
         total += itemTotal;
+        orderItems.push(`${menuItem.name} x${item.qty}`);
+        
         tbody.innerHTML += `<tr>
           <td>${menuItem.name}</td>
           <td>₹${menuItem.price}</td>
@@ -51,15 +63,46 @@
         </tr>`;
       });
       document.getElementById("grandTotal").innerText = `Grand Total: ₹${total}`;
+      window.orderItems = orderItems;  // Store for SMS
+      window.grandTotal = total;
     }
     
     function changeQty(i, change) {
-      cart[i].qty += change; if (cart[i].qty <= 0) cart.splice(i,1);
-      localStorage.setItem("cart", JSON.stringify(cart)); renderCart();
+      cart[i].qty += change; 
+      if (cart[i].qty <= 0) cart.splice(i,1);
+      localStorage.setItem("cart", JSON.stringify(cart)); 
+      renderCart();
     }
-    function removeItem(i) { cart.splice(i,1); localStorage.setItem("cart", JSON.stringify(cart)); renderCart(); }
-    function placeOrder() { if (cart.length===0) return alert("Cart empty!"); alert("Order placed!"); localStorage.removeItem("cart"); window.location.href="index.html"; }
+    
+    function removeItem(i) { 
+      cart.splice(i,1); 
+      localStorage.setItem("cart", JSON.stringify(cart)); 
+      renderCart(); 
+    }
+    
+    function placeOrder() { 
+      if (cart.length===0) return alert("Cart empty!"); 
+      
+      // Create order message
+      const phone = document.getElementById("restaurantPhone").value;
+      const itemsText = window.orderItems.join(", ");
+      const message = `🔔 NEW ORDER - Table ${tableNo}\n📋 Items: ${itemsText}\n💰 Total: ₹${window.grandTotal}\n⏰ Time: ${new Date().toLocaleString('en-IN')}`;
+      
+      // Show preview
+      alert(`SMS Preview:\n\n${message}\n\nClick OK to send via WhatsApp`);
+      
+      // Send via WhatsApp Web (works on mobile too!)
+      const whatsappUrl = `https://wa.me/${phone.replace(/[^0-9]/g,'')}?text=${encodeURIComponent(message)}`;
+      window.open(whatsappUrl, '_blank');
+      
+      // Clear cart
+      localStorage.removeItem("cart"); 
+      alert("✅ Order placed & SMS sent to restaurant!");
+      window.location.href="index.html"; 
+    }
+    
     function goBack() { window.location.href="index.html"; }
+    
     renderCart();
   </script>
 </body>
