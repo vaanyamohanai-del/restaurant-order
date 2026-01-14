@@ -1,40 +1,96 @@
-.item {
-  border: 1px solid #ddd;
-  padding: 15px;
-  margin: 10px 0;
-  border-radius: 8px;
-  background: #f9f9f9;
+/* Reset and base styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
+body {
+  font-family: Arial, sans-serif;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background: #f4f4f4;
+}
+
+h2 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* Menu container */
+.menu {
+  margin-bottom: 20px;
+}
+
+/* Item card - FIXED */
+.item {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 20px;
+  margin: 15px 0;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Header line - FIXED to work */
 .item-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  margin-bottom: 15px !important;
+  flex-wrap: nowrap !important;
 }
 
 .item h3 {
-  margin: 0;
-  font-size: 1.2em;
+  margin: 0 !important;
+  font-size: 1.4em !important;
+  color: #2c3e50 !important;
+  font-weight: bold !important;
 }
 
 .item p {
-  margin: 0;
-  font-weight: bold;
-  color: #e74c3c;
+  margin: 0 !important;
+  font-size: 1.2em !important;
+  font-weight: bold !important;
+  color: #e74c3c !important;
+  white-space: nowrap !important;
 }
 
+/* Fixed button size */
 .item button {
-  width: 100%;
-  padding: 10px;
-  background: #27ae60;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  font-size: 1em;
-  cursor: pointer;
+  display: block !important;
+  width: 100% !important;
+  padding: 12px 20px !important;
+  background: #27ae60 !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 6px !important;
+  font-size: 1.1em !important;
+  font-weight: bold !important;
+  cursor: pointer !important;
+  transition: background 0.3s !important;
 }
 
 .item button:hover {
-  background: #229954;
+  background: #229954 !important;
+}
+
+/* View Cart button */
+button[onclick="goToCart()"] {
+  display: block;
+  width: 200px;
+  margin: 0 auto;
+  padding: 15px;
+  background: #3498db;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1.2em;
+  cursor: pointer;
+}
+
+button[onclick="goToCart()"]:hover {
+  background: #2980b9;
 }
