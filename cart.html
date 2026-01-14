@@ -1,12 +1,129 @@
-🔔 NEW RESTAURANT ORDER
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Cart</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Arial; max-width: 600px; margin: 20px auto; padding: 20px; }
+    h2 { text-align: center; color: #333; margin-bottom: 20px; }
+    table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 3px 10px rgba(0,0,0,0.1); }
+    th, td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
+    th { background: #3498db; color: white; }
+    button { padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+    .qty-btn { background: #95a5a6; color: white; margin: 0 2px; }
+    .remove-btn { background: #e74c3c; color: white; }
+    .place-order { background: #27ae60; color: white; padding: 15px 35px; font-size: 16px; margin: 20px 10px 0 0; }
+    .back-btn { background: #3498db; color: white; padding: 15px 35px; font-size: 16px; }
+    .phone-input { margin: 20px 0; text-align: center; }
+    .phone-input input { padding: 12px; width: 220px; font-size: 16px; border: 2px solid #ddd; border-radius: 6px; }
+    .order-preview { 
+      background: #e8f5e8; padding: 20px; border-radius: 10px; margin: 15px 0; 
+      font-family: monospace; white-space: pre-wrap; display: none;
+    }
+  </style>
+</head>
+<body>
+  <h2>Table <span id="tableNo"></span> - Your Cart</h2>
+  
+  <table>
+    <thead><tr><th>Item</th><th>Price</th><th>Qty</th><th>Total</th><th></th></tr></thead>
+    <tbody id="cartItems"></tbody>
+  </table>
+  
+  <h3 id="grandTotal" style="text-align: right; margin: 20px 0; font-size: 24px;"></h3>
+  
+  <div class="phone-input">
+    <label>Send to WhatsApp: </label>
+    <input type="tel" id="restaurantPhone" value="+919876543210" placeholder="+91XXXXXXXXXX">
+  </div>
+  
+  <div style="text-align: center;">
+    <button class="place-order" onclick="previewOrder()">Preview Order</button>
+    <button class="place-order" onclick="placeOrder()" style="background: #e67e22;">🚀 Send Order</button>
+    <br><button class="back-btn" onclick="goBack()">Back to Menu</button>
+  </div>
+  
+  <div id="orderPreview" class="order-preview"></div>
 
-📍 Table: 1
-⏰ Time: 14/1/2026, 9:56:00 PM
-🍽️ Order Details:
+  <script>
+    const menu = {1: {name:"Burger", price:120}, 2:{name:"Pizza", price:250}};
+    let tableNo = new URLSearchParams(window.location.search).get('table') || 1;
+    document.getElementById("tableNo").innerText = tableNo;
+    let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+    
+    function renderCart() {
+      let tbody = document.getElementById("cartItems");
+      tbody.innerHTML = ""; let total = 0;
+      let orderItems = [];
+      
+      cart.forEach((item, i) => {
+        let menuItem = menu[item.id]; 
+        let itemTotal = menuItem.price * item.qty;
+        total += itemTotal;
+        orderItems.push(`${menuItem.name} (x${item.qty})`);
+        
+        tbody.innerHTML += `<tr>
+          <td>${menuItem.name}</td>
+          <td>₹${menuItem.price}</td>
+          <td><button class="qty-btn" onclick="changeQty(${i},-1)">-</button>${item.qty}<button class="qty-btn" onclick="changeQty(${i},1)">+</button></td>
+          <td>₹${itemTotal}</td>
+          <td><button class="remove-btn" onclick="removeItem(${i})">X</button></td>
+        </tr>`;
+      });
+      
+      document.getElementById("grandTotal").innerText = `Grand Total: ₹${total}`;
+      window.orderItems = orderItems;
+      window.grandTotal = total;
+    }
+    
+    function changeQty(i, change) {
+      cart[i].qty += change; 
+      if (cart[i].qty <= 0) cart.splice(i,1);
+      localStorage.setItem("cart", JSON.stringify(cart)); 
+      renderCart();
+    }
+    
+    function removeItem(i) { 
+      cart.splice(i,1); 
+      localStorage.setItem("cart", JSON.stringify(cart)); 
+      renderCart(); 
+    }
+    
+    function previewOrder() {
+      if (cart.length===0) return alert("Cart empty!");
+      document.getElementById("orderPreview").style.display = "block";
+      document.getElementById("orderPreview").scrollIntoView();
+    }
+    
+    function placeOrder() { 
+      if (cart.length===0) return alert("Cart empty!");
+      
+      const phone = document.getElementById("restaurantPhone").value;
+      if (!phone) return alert("Please enter phone number!");
+      
+      // PROFESSIONAL RESTAURANT ORDER FORMAT
+      const orderDetails = `🔔 *NEW RESTAURANT ORDER*
 
-• Burger (x2) 
-• Pizza (x1)
+📍 *Table:* ${tableNo}
+⏰ *Time:* ${new Date().toLocaleString('en-IN', {timeZone: 'Asia/Kolkata'})}
+🍽️ *Order Details:*
 
-💰 GRAND TOTAL: ₹490
+${window.orderItems.map(item => `• ${item} - ₹${menu[cart.find(x=>window.orderItems.indexOf(item.includes('Burger')||'Pizza'?item:null)?.id||1)?.price * (parseInt(item.match(/x(\\d+)/)?.[1])||1) || 0}`).join('\n')}
 
-✅ Status: AWAITING PREPARATION
+💰 *GRAND TOTAL:* ₹${window.grandTotal}
+
+✅ *Status:* AWAITING PREPARATION`;
+
+      const whatsappUrl = `https://wa.me/${phone.replace(/[^0-9]/g,'')}?text=${encodeURIComponent(orderDetails)}`;
+      window.open(whatsappUrl, '_blank');
+      
+      localStorage.removeItem("cart"); 
+      alert("✅ Order sent to WhatsApp! Check restaurant phone.");
+      window.location.href="index.html"; 
+    }
+    
+    function goBack() { window.location.href="index.html"; }
+    renderCart();
+  </script>
+</body>
+</html>
